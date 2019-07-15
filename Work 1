@@ -1,0 +1,28 @@
+data <- read.table("pml-training.csv", header = TRUE, sep = ",", na.strings = c("","NA"))
+data
+colstrain <- colnames(data[,colSums(is.na(data)) < 0.5*nrow(data)])
+training <- data[,colstrain]
+training
+training <- training[,8:60]
+training
+Test <- read.table("pml-testing.csv", header = TRUE, sep = ",", na.strings = c("","NA"))
+Test
+colstest <- colnames(Test[,colSums(is.na(Test)) < 0.5*nrow(Test)])
+colstest
+Testing <- Test[,colstest]
+Testing
+testing <- Testing[,8:59]
+testing
+install.packages("caTools")
+require(caTools)
+
+set.seed(101)
+sample = sample.split(training$classe, SplitRatio = .8)
+train = subset(training, sample == TRUE)
+test  = subset(testing, sample == FALSE)
+install.packages("randomForest")
+library("randomForest")
+rf=randomForest(classe~.,data=train,importance=FALSE)
+rf
+pr=predict(rf,newdata=train,type='class')
+pr
